@@ -7,6 +7,8 @@ from axolotl.ecc.curve import Curve
 from axolotl.ecc.djbec import DjbECPublicKey
 import binascii
 import sys
+import logging
+
 class ResultGetKeysIqProtocolEntity(ResultIqProtocolEntity):
     """
     <iq type="result" from="s.whatsapp.net" id="3">
@@ -81,12 +83,18 @@ class ResultGetKeysIqProtocolEntity(ResultIqProtocolEntity):
         userNodes = node.getChild("list").getAllChildren()
         for userNode in userNodes:
             preKeyNode = userNode.getChild("key")
+            if (preKeyNode is None):
+                logger = logging.getLogger(__name__)
+                logger.warning("Failed to receive preKeyNode for %s"%(userNode.getAttributeValue("jid") if "jid" in userNode.attributes else "unknown"))
+                preKeyId = None
+                preKeyPublic = None
+            else
+                preKeyId = ResultGetKeysIqProtocolEntity._bytesToInt(preKeyNode.getChild("id").getData())
+                preKeyPublic = DjbECPublicKey(ResultGetKeysIqProtocolEntity.encStr(preKeyNode.getChild("value").getData()))
+
             signedPreKeyNode = userNode.getChild("skey")
             registrationId = ResultGetKeysIqProtocolEntity._bytesToInt(userNode.getChild("registration").getData())
             identityKey = IdentityKey(DjbECPublicKey(ResultGetKeysIqProtocolEntity.encStr(userNode.getChild("identity").getData())))
-
-            preKeyId = ResultGetKeysIqProtocolEntity._bytesToInt(preKeyNode.getChild("id").getData())
-            preKeyPublic = DjbECPublicKey(ResultGetKeysIqProtocolEntity.encStr(preKeyNode.getChild("value").getData()))
 
             signedPreKeyId = ResultGetKeysIqProtocolEntity._bytesToInt(signedPreKeyNode.getChild("id").getData())
             signedPreKeySig = ResultGetKeysIqProtocolEntity.encStr(signedPreKeyNode.getChild("signature").getData())
