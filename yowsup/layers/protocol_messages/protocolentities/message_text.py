@@ -1,5 +1,7 @@
 from .protomessage import ProtomessageProtocolEntity
 from .message import MessageAttributes
+import emoji
+
 class TextMessageProtocolEntity(ProtomessageProtocolEntity):
     def __init__(self, body, messageAttributes=None, to=None):
         #flexible attributes for temp backwards compat
@@ -23,4 +25,4 @@ class TextMessageProtocolEntity(ProtomessageProtocolEntity):
 
     def setBody(self, body):
         #obsolete
-        self.conversation = body
+        self.conversation = emoji.emojize(body, use_aliases=True)

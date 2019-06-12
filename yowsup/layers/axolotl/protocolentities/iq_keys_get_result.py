@@ -88,7 +88,7 @@ class ResultGetKeysIqProtocolEntity(ResultIqProtocolEntity):
                 logger.warning("Failed to receive preKeyNode for %s"%(userNode.getAttributeValue("jid") if "jid" in userNode.attributes else "unknown"))
                 preKeyId = None
                 preKeyPublic = None
-            else
+            else:
                 preKeyId = ResultGetKeysIqProtocolEntity._bytesToInt(preKeyNode.getChild("id").getData())
                 preKeyPublic = DjbECPublicKey(ResultGetKeysIqProtocolEntity.encStr(preKeyNode.getChild("value").getData()))
 
