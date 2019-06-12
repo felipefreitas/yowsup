@@ -7,11 +7,7 @@ from axolotl.ecc.curve import Curve
 from axolotl.ecc.djbec import DjbECPublicKey
 import binascii
 import sys
-<<<<<<< HEAD
 import logging
-=======
-
->>>>>>> 69c5211f1f4695b11fcaa64591b3582bacc0d5dc
 
 class ResultGetKeysIqProtocolEntity(ResultIqProtocolEntity):
     """
