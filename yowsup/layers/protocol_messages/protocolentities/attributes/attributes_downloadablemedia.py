@@ -1,4 +1,4 @@
-from yowsup.layers.protocol_media.protocolentities.attributes.attributes_media import MediaAttributes
+from yowsup.layers.protocol_messages.protocolentities.attributes.attributes_media import MediaAttributes
 from yowsup.common.tools import MimeTools
 import base64
 import hashlib
@@ -16,29 +16,49 @@ class DownloadableMediaMessageAttributes(MediaAttributes):
 
     def __str__(self):
         return "[url=%s, mimetype=%s, file_length=%d, file_sha256=%s, media_key=%s]" % (
-            self.url,self.mimetype, self.file_length, base64.b64encode(self.file_sha256),
-            base64.b64encode(self.media_key)
+            self.url,self.mimetype, self.file_length, base64.b64encode(self.file_sha256) if self.file_sha256 else None,
+            base64.b64encode(self.media_key) if self.media_key else None
         )
 
     @property
     def url(self):
         return self._url
 
+    @url.setter
+    def url(self, value):
+        self._url = value
+
     @property
     def mimetype(self):
         return self._mimetype
+
+    @mimetype.setter
+    def mimetype(self, value):
+        self._mimetype = value
 
     @property
     def file_length(self):
         return self._file_length
 
+    @file_length.setter
+    def file_length(self, value):
+        self._file_length = value
+
     @property
     def file_sha256(self):
         return self._file_sha256
 
+    @file_sha256.setter
+    def file_sha256(self, value):
+        self._file_sha256 = value
+
     @property
     def media_key(self):
         return self._media_key
+
+    @media_key.setter
+    def media_key(self, value):
+        self._media_key = value
 
     @staticmethod
     def from_file(

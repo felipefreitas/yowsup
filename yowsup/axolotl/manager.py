@@ -61,13 +61,13 @@ class AxolotlManager(object):
 
     def level_prekeys(self, force=False):
         logger.debug("level_prekeys(force=%s)" % force)
-        pending_prekeys = self._store.loadPreKeys()
-        logger.debug("len(pending_prekeys) = %d" % len(pending_prekeys))
-        if force or len(pending_prekeys) < self.THRESHOLD_REGEN:
-            count_gen = self.COUNT_GEN_PREKEYS - len(pending_prekeys)
-            logger.info("Generating %d prekeys" % count_gen)
-            ## arbitrary, should keep track of generated prekey ids and create from there
-            prekeys = KeyHelper.generatePreKeys(KeyHelper.getRandomSequence(2**32 // 2), count_gen)
+        len_pending_prekeys = len(self._store.loadPreKeys())
+        logger.debug("len(pending_prekeys) = %d" % len_pending_prekeys)
+        if force or len_pending_prekeys < self.THRESHOLD_REGEN:
+            count_gen = self.COUNT_GEN_PREKEYS
+            max_prekey_id = self._store.preKeyStore.loadMaxPreKeyId()
+            logger.info("Generating %d prekeys, current max_prekey_id=%d" % (count_gen, max_prekey_id))
+            prekeys = KeyHelper.generatePreKeys(max_prekey_id + 1, count_gen)
             logger.info("Storing %d prekeys" % len(prekeys))
             for i in range(0, len(prekeys)):
                 key = prekeys[i]
@@ -221,6 +221,8 @@ class AxolotlManager(object):
             raise exceptions.NoSessionException()
         except DuplicateMessageException:
             raise exceptions.DuplicateMessageException()
+        except InvalidMessageException:
+            raise exceptions.InvalidMessageException()
 
     def group_create_skmsg(self, groupid):
         logger.debug("group_create_skmsg(groupid=%s)" % groupid)
@@ -272,7 +274,6 @@ class AxolotlManager(object):
         """
         logger.debug("session_exists(%s)?" % username)
         return self._store.containsSession(username, 1)
-
 
     def load_senderkey(self, groupid):
         logger.debug("load_senderkey(groupid=%s)" % groupid)
